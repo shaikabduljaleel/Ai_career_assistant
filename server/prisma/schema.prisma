@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client"
-  output   = "../generated/prisma"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -8,12 +8,28 @@ datasource db {
 }
 
 model User {
-  id              Int      @id @default(autoincrement())
-  name            String
-  email           String   @unique
-  password        String?
-  googleId        String?  @unique
-  isEmailVerified Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                        Int        @id @default(autoincrement())
+  name                      String
+  email                     String     @unique
+  password                  String?
+  googleId                  String?    @unique
+  isEmailVerified           Boolean    @default(false)
+  emailVerificationToken    String?    @unique
+  emailVerificationExpires  DateTime?
+  createdAt                 DateTime   @default(now())
+  updatedAt                 DateTime   @updatedAt
+}
+
+model VerificationCode {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  codeHash   String
+  expiresAt  DateTime
+  attempts   Int      @default(0)
+  usedAt     DateTime?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
