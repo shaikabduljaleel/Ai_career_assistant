@@ -1,5 +1,13 @@
 import type { Request, Response } from "express";
-import { registerUser,loginUser,getCurrentUser,verifyEmail ,resendVerificationEmail} from "../services/auth.service.js";
+import {
+  registerUser,
+  loginUser,
+  getCurrentUser,
+  verifyEmail,
+  resendVerificationEmail,
+  requestPasswordReset,
+  resetPassword,
+} from "../services/auth.service.js";
 
 import type { AuthRequest } from "../middleware/auth.middleware.js";
 import {
@@ -7,6 +15,8 @@ import {
   verifyOtp,
 } from "../services/otp.service.js";
 import prisma from "../config/prisma.js";
+import { VerificationPurpose } from "../generated/prisma/enums.js";
+import jwt from "jsonwebtoken";
 
 
 export const register = async (req: Request, res: Response) => {
@@ -117,6 +127,7 @@ export const login=async(req:Request,res:Response)=>{
     message: error.message,
   });
 }
+
     console.error(error);
     return res.status(500).json({
       success:false,
@@ -124,6 +135,52 @@ export const login=async(req:Request,res:Response)=>{
     });
   }
 }
+
+export const googleCallback = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const user = req.user as {
+      id: number;
+      email: string;
+      name: string;
+      isEmailVerified: boolean;
+    };
+
+    const token = jwt.sign(
+      {
+        userId: user.id,
+      },
+      process.env.JWT_SECRET!,
+      {
+        expiresIn: "7d",
+      }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure:
+        process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge:
+        7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.redirect(
+      "http://localhost:5173/dashboard"
+    );
+  } catch (error) {
+    console.error(
+      "Google callback error:",
+      error
+    );
+
+    return res.redirect(
+      "http://localhost:5173/login"
+    );
+  }
+};
 
 export const getMe = async (
   req: AuthRequest,
@@ -253,6 +310,93 @@ export const resendVerification=async(req:Request,res:Response)=>{
   }
 }
 
+export const forgotPassword = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    await requestPasswordReset(email);
+
+    return res.status(200).json({
+      success: true,
+      message:
+        "If an account exists, a password reset OTP has been sent.",
+    });
+  } catch (error) {
+    console.error("Forgot password error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to process request",
+    });
+  }
+};
+
+export const resetPasswordController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Email, OTP and new password are required",
+      });
+    }
+
+    if (!/^\d{6}$/.test(otp)) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP must be 6 digits",
+      });
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 8 characters",
+      });
+    }
+
+    await resetPassword(email, otp, newPassword);
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset successfully",
+    });
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      (error.message === "Invalid OTP" ||
+        error.message === "OTP is Invalid or has expired" ||
+        error.message === "Maximum OTP attempts exceeded")
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
+    console.error("Reset password error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to reset password",
+    });
+  }
+};
+
 export const sendOtp=async(req:Request,res:Response)=>{
   try{
     const {email}=req.body;
@@ -321,7 +465,7 @@ export const verifyOtpController = async (
       });
     }
 
-    await verifyOtp(user.id, otp);
+    await verifyOtp(user.id, otp, VerificationPurpose.EMAIL_VERIFICATION);
 
     await prisma.user.update({
       where: {

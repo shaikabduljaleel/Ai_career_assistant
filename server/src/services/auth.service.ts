@@ -3,6 +3,11 @@ import prisma from '../config/prisma.js';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { sendVerificationEmail } from './email.service.js';
+import { VerificationPurpose } from '../generated/prisma/enums.js';
+import {
+  createOtp,
+  verifyOtp,
+} from './otp.service.js';
 
 
 interface RegisterUserData{
@@ -67,6 +72,7 @@ export const loginUser=async(email:string,password:string)=>{
   const token = jwt.sign(
     {
       userId: user.id,
+
     },
     process.env.JWT_SECRET as string,
     {
@@ -83,6 +89,61 @@ export const loginUser=async(email:string,password:string)=>{
     },
   };
 }
+
+export const requestPasswordReset = async (email: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if (!user) {
+    return;
+  }
+
+  await createOtp(
+    user.id,
+    user.email,
+    user.name,
+    VerificationPurpose.PASSWORD_RESET
+  );
+};
+
+export const resetPassword = async (
+  email: string,
+  otp: string,
+  newPassword: string
+) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if (!user) {
+    throw new Error("Invalid reset request");
+  }
+
+  await verifyOtp(
+    user.id,
+    otp,
+    VerificationPurpose.PASSWORD_RESET
+  );
+
+  const hashedPassword = await bcrypt.hash(
+    newPassword,
+    10
+  );
+
+  await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      password: hashedPassword,
+    },
+  });
+};
 
 export const getCurrentUser = async (userId: number) => {
   const user = await prisma.user.findUnique({

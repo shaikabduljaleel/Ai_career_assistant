@@ -22,15 +22,22 @@ model User {
 }
 
 model VerificationCode {
-  id         Int      @id @default(autoincrement())
+  id         Int                @id @default(autoincrement())
   userId     Int
   codeHash   String
+  purpose    VerificationPurpose @default(EMAIL_VERIFICATION)
   expiresAt  DateTime
-  attempts   Int      @default(0)
+  attempts   Int                @default(0)
   usedAt     DateTime?
-  createdAt  DateTime @default(now())
+  createdAt  DateTime           @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
+
+enum VerificationPurpose {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+

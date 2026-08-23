@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import prisma from "../config/prisma.js"
 import {Resend} from "resend"
+import { VerificationPurpose } from "../generated/prisma/enums.js";
 
 const resend=new Resend(process.env.RESEND_API_KEY)
 const OTP_EXPIRY_MINUTES=10
@@ -22,7 +23,8 @@ const hashOtp=(otp:string):string=>{
 export const createOtp=async(
   userId:number,
   email:string,
-  name:string
+  name:string,
+  purpose:VerificationPurpose = VerificationPurpose.EMAIL_VERIFICATION
 )=>{
   const otp=generateOtp();
   const codeHash=hashOtp(otp)
@@ -37,12 +39,13 @@ export const createOtp=async(
     }
   });
   await prisma.verificationCode.create({
-    data:{
+    data: {
       userId,
       codeHash,
+      purpose,
       expiresAt,
-    }
-  })
+    },
+  });
   await resend.emails.send({
      from: "AI Career Assistant <onboarding@resend.dev>",
     to: email,
@@ -69,28 +72,36 @@ export const createOtp=async(
 export const verifyOtp=async(
   userId:number,
   otp:string,
+  purpose:VerificationPurpose
 )=>{
-  const verificationCode=
-  await prisma.verificationCode.findFirst({
-    where:{
-      userId,
-      usedAt:null,
-      expiresAt:{
-        gt:new Date(),
+  const verificationCode =
+    await prisma.verificationCode.findFirst({
+      where: {
+        userId,
+        purpose,
+        usedAt: null,
+        expiresAt: {
+          gt: new Date(),
+        },
       },
-    },
-    orderBy:{
-      createdAt:"desc",
-    },
-  });
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
   if(!verificationCode){
     throw new Error("OTP is Invalid or has expired");
   }
+  if (verificationCode.attempts >= MAX_ATTEMPTS) {
+    throw new Error("Maximum OTP attempts exceeded");
+  }
   const submittedHash=hashOtp(otp);
   if(submittedHash!==verificationCode.codeHash){
-    await prisma.verificationCode.update({
+    const updatedCode = await prisma.verificationCode.updateMany({
       where:{
         id:verificationCode.id,
+        attempts: {
+          lt: MAX_ATTEMPTS,
+        },
       },
       data:{
         attempts:{
@@ -98,6 +109,9 @@ export const verifyOtp=async(
         },
       },
     });
+    if (updatedCode.count === 0 || verificationCode.attempts + 1 >= MAX_ATTEMPTS) {
+      throw new Error("Maximum OTP attempts exceeded");
+    }
     throw new Error("Invalid OTP");
   }
   await prisma.verificationCode.update({

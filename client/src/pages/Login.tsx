@@ -87,6 +87,16 @@ function Login() {
         >
           {submitting ? "Logging in..." : "Log in"}
         </button>
+        <button
+          type="button"
+          onClick={() => {
+            window.location.href =
+              "http://localhost:5000/api/auth/google";
+          }}
+          className="w-full rounded-lg border bg-white px-5 py-3 text-gray-700 hover:bg-gray-50"
+        >
+          Continue with Google
+        </button>
         <p className="text-center text-sm text-gray-600">
   Don't have an account?{" "}
   <Link
