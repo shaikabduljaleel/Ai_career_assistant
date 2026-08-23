@@ -18,6 +18,7 @@ model User {
   emailVerificationExpires  DateTime?
   createdAt                 DateTime   @default(now())
   updatedAt                 DateTime   @updatedAt
+  verificationCodes VerificationCode[]
 }
 
 model VerificationCode {

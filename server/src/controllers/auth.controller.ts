@@ -2,6 +2,11 @@ import type { Request, Response } from "express";
 import { registerUser,loginUser,getCurrentUser,verifyEmail ,resendVerificationEmail} from "../services/auth.service.js";
 
 import type { AuthRequest } from "../middleware/auth.middleware.js";
+import {
+  createOtp,
+  verifyOtp,
+} from "../services/otp.service.js";
+import prisma from "../config/prisma.js";
 
 
 export const register = async (req: Request, res: Response) => {
@@ -248,3 +253,127 @@ export const resendVerification=async(req:Request,res:Response)=>{
   }
 }
 
+export const sendOtp=async(req:Request,res:Response)=>{
+  try{
+    const {email}=req.body;
+    if (!email){
+      return res.status(400).json({
+        success:false,
+        message:"Email is Required",
+      });
+    }
+    const user=await prisma.user.findUnique({
+      where:{
+        email,
+      }
+    });
+    if(!user){
+      return res.status(404).json({
+        success:false,
+        message:"User not found",
+      })
+    }
+    await createOtp(user.id,user.email,user.name);
+    return res.status(200).json({
+      success:true,
+      message:"OTP sent successfully",
+    });
+  }catch(error){
+    console.error("Send OTP error:",error);
+    return res.status(500).json({
+      success:false,
+      message:"Unable to send the OTP",
+    })
+  }
+}
+
+export const verifyOtpController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and OTP are required",
+      });
+    }
+
+    if (!/^\d{6}$/.test(otp)) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP must be 6 digits",
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    await verifyOtp(user.id, otp);
+
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        isEmailVerified: true,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "OTP verified successfully",
+    });
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message === "Invalid OTP"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid OTP",
+      });
+    }
+
+    if (
+      error instanceof Error &&
+      error.message ===
+        "OTP is Invalid or has expired"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid OTP",
+      });
+    }
+
+    if (
+      error instanceof Error &&
+      error.message ===
+        "Maximum OTP attempts exceeded"
+    ) {
+      return res.status(429).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
+    console.error("Verify OTP error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to verify OTP",
+    });
+  }
+};

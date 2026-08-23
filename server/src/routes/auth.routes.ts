@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { register,login,getMe,logout,verifyEmailController,resendVerification } from "../controllers/auth.controller.js";
+import { register,login,getMe,logout,verifyEmailController,resendVerification,sendOtp,verifyOtpController } from "../controllers/auth.controller.js";
 import { authenticate } from "../middleware/auth.middleware.js";
 import { get } from "http";
 
@@ -15,4 +15,6 @@ router.post(
   "/resend-verification",
   resendVerification
 );
+router.post("/send-otp",sendOtp);
+router.post("/verify-otp",verifyOtpController)
 export default router;
