@@ -19,6 +19,7 @@ model User {
   createdAt                 DateTime   @default(now())
   updatedAt                 DateTime   @updatedAt
   verificationCodes VerificationCode[]
+  careerProfile CareerProfile?
 }
 
 model VerificationCode {
@@ -39,5 +40,107 @@ model VerificationCode {
 enum VerificationPurpose {
   EMAIL_VERIFICATION
   PASSWORD_RESET
+}
+
+model CareerProfile {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @unique
+
+  headline    String?
+  bio         String?
+  location    String?
+  phone       String?
+  githubUrl   String?
+  linkedinUrl String?
+  portfolioUrl String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  education   Education[]
+  experience  Experience[]
+  skills      ProfileSkill[]
+  goals       CareerGoal[]
+}
+
+model Education {
+  id           Int      @id @default(autoincrement())
+  profileId    Int
+
+  institution  String
+  degree       String?
+  field        String?
+  startYear    Int?
+  endYear      Int?
+  description  String?
+
+  createdAt    DateTime @default(now())
+
+  profile CareerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+}
+
+model Experience {
+  id          Int      @id @default(autoincrement())
+  profileId   Int
+
+  company     String
+  role        String
+  location    String?
+  startDate   DateTime?
+  endDate     DateTime?
+  description String?
+
+  createdAt   DateTime @default(now())
+
+  profile CareerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+}
+
+model Skill {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+
+  profiles ProfileSkill[]
+}
+
+model ProfileSkill {
+  profileId Int
+  skillId   Int
+
+  level     SkillLevel @default(BEGINNER)
+
+  profile CareerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([profileId, skillId])
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+model CareerGoal {
+  id          Int      @id @default(autoincrement())
+  profileId   Int
+
+  title       String
+  description String?
+  targetRole  String?
+  targetDate  DateTime?
+
+  createdAt   DateTime @default(now())
+
+  profile CareerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
 }
 
