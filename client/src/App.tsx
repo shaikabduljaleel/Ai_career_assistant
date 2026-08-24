@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 import VerifyEmail from "./pages/VerifyEmail";
 import ResendVerification from "./pages/ResendVerification";
 import VerifyOtp from "./pages/VerifyOtp";
+import Profile from "./pages/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -34,6 +35,14 @@ function App() {
         <Route
   path="/verify-otp"
   element={<VerifyOtp />}
+/>
+<Route
+  path="/profile"
+  element={
+    <ProtectedRoute>
+      <Profile />
+    </ProtectedRoute>
+  }
 />
         <Route path="*" element={<Login />} />
       </Routes>

@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.routes.js";
 import cookieParser from 'cookie-parser';
 import passport from "./config/passport.js";
 import profileRoutes from "./routes/profile.routes.js";
+import documentRoutes from "./routes/document.routes.js";
 
 const app = express();
 
@@ -23,5 +24,9 @@ app.use(passport.initialize());
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
+app.use(
+  "/api/documents",
+  documentRoutes
+);
 
 export default app;
