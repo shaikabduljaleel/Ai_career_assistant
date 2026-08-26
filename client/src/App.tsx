@@ -7,6 +7,7 @@ import VerifyEmail from "./pages/VerifyEmail";
 import ResendVerification from "./pages/ResendVerification";
 import VerifyOtp from "./pages/VerifyOtp";
 import Profile from "./pages/Profile";
+import Chat from "./pages/Chat";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -43,6 +44,10 @@ function App() {
       <Profile />
     </ProtectedRoute>
   }
+/>
+<Route
+  path="/chat"
+  element={<Chat />}
 />
         <Route path="*" element={<Login />} />
       </Routes>

@@ -8,6 +8,8 @@ import cookieParser from 'cookie-parser';
 import passport from "./config/passport.js";
 import profileRoutes from "./routes/profile.routes.js";
 import documentRoutes from "./routes/document.routes.js";
+import searchRoutes from "./routes/search.routes.js";
+import chatRoutes from "./routes/chat.routes.js";
 
 const app = express();
 
@@ -27,6 +29,11 @@ app.use("/api/profile", profileRoutes);
 app.use(
   "/api/documents",
   documentRoutes
+);
+app.use("/api/search", searchRoutes);
+app.use(
+  "/api/chat",
+  chatRoutes
 );
 
 export default app;

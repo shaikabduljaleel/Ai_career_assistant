@@ -14,39 +14,32 @@ model User {
   password                 String?
   googleId                 String?            @unique
   isEmailVerified          Boolean            @default(false)
-  emailVerificationToken   String?            @unique
-  emailVerificationExpires DateTime?
   createdAt                DateTime           @default(now())
   updatedAt                DateTime           @updatedAt
-  verificationCodes        VerificationCode[]
+  emailVerificationExpires DateTime?
+  emailVerificationToken   String?            @unique
   careerProfile            CareerProfile?
   documents                Document[]
+  verificationCodes        VerificationCode[]
 }
 
 model VerificationCode {
   id        Int                 @id @default(autoincrement())
   userId    Int
   codeHash  String
-  purpose   VerificationPurpose @default(EMAIL_VERIFICATION)
   expiresAt DateTime
   attempts  Int                 @default(0)
   usedAt    DateTime?
   createdAt DateTime            @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  purpose   VerificationPurpose @default(EMAIL_VERIFICATION)
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
-enum VerificationPurpose {
-  EMAIL_VERIFICATION
-  PASSWORD_RESET
-}
-
 model CareerProfile {
-  id     Int @id @default(autoincrement())
-  userId Int @unique
-
+  id           Int            @id @default(autoincrement())
+  userId       Int            @unique
   headline     String?
   bio          String?
   location     String?
@@ -54,72 +47,105 @@ model CareerProfile {
   githubUrl    String?
   linkedinUrl  String?
   portfolioUrl String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  education  Education[]
-  experience Experience[]
-  skills     ProfileSkill[]
-  goals      CareerGoal[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  goals        CareerGoal[]
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  education    Education[]
+  experience   Experience[]
+  skills       ProfileSkill[]
 }
 
 model Education {
-  id        Int @id @default(autoincrement())
-  profileId Int
-
+  id          Int           @id @default(autoincrement())
+  profileId   Int
   institution String
   degree      String?
   field       String?
   startYear   Int?
   endYear     Int?
   description String?
-
-  createdAt DateTime @default(now())
-
-  profile CareerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  createdAt   DateTime      @default(now())
+  profile     CareerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@index([profileId])
 }
 
 model Experience {
-  id        Int @id @default(autoincrement())
-  profileId Int
-
+  id          Int           @id @default(autoincrement())
+  profileId   Int
   company     String
   role        String
   location    String?
   startDate   DateTime?
   endDate     DateTime?
   description String?
-
-  createdAt DateTime @default(now())
-
-  profile CareerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  createdAt   DateTime      @default(now())
+  profile     CareerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@index([profileId])
 }
 
 model Skill {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-
+  id       Int            @id @default(autoincrement())
+  name     String         @unique
   profiles ProfileSkill[]
 }
 
 model ProfileSkill {
   profileId Int
   skillId   Int
-
-  level SkillLevel @default(BEGINNER)
-
-  profile CareerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-
-  skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  level     SkillLevel    @default(BEGINNER)
+  profile   CareerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  skill     Skill         @relation(fields: [skillId], references: [id], onDelete: Cascade)
 
   @@id([profileId, skillId])
+}
+
+model CareerGoal {
+  id          Int           @id @default(autoincrement())
+  profileId   Int
+  title       String
+  description String?
+  targetRole  String?
+  targetDate  DateTime?
+  createdAt   DateTime      @default(now())
+  profile     CareerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+}
+
+model Document {
+  id           Int             @id @default(autoincrement())
+  userId       Int
+  originalName String
+  storedName   String
+  mimeType     String
+  size         Int
+  path         String
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chunks       DocumentChunk[]
+
+  @@index([userId])
+}
+
+model DocumentChunk {
+  id         Int                    @id @default(autoincrement())
+  documentId Int
+  chunkIndex Int
+  content    String
+  createdAt  DateTime               @default(now())
+  embedding  Unsupported("vector")?
+  document   Document               @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+}
+
+enum VerificationPurpose {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
 }
 
 enum SkillLevel {
@@ -127,38 +153,4 @@ enum SkillLevel {
   INTERMEDIATE
   ADVANCED
   EXPERT
-}
-
-model CareerGoal {
-  id        Int @id @default(autoincrement())
-  profileId Int
-
-  title       String
-  description String?
-  targetRole  String?
-  targetDate  DateTime?
-
-  createdAt DateTime @default(now())
-
-  profile CareerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-
-  @@index([profileId])
-}
-
-model Document {
-  id     Int @id @default(autoincrement())
-  userId Int
-
-  originalName String
-  storedName   String
-  mimeType     String
-  size         Int
-  path         String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
 }

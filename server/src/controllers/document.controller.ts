@@ -6,6 +6,9 @@ import {
   getUserDocuments,
   deleteDocument,
 } from "../services/document.service.js";
+import {
+  processDocument,
+} from "../services/document-processing.service.js";
 
 export const uploadDocumentController = async (
   req: AuthRequest,
@@ -47,10 +50,15 @@ export const uploadDocumentController = async (
         }
       );
 
+    const processing = await processDocument(document.id);
+
     return res.status(201).json({
       success: true,
-      message: "Document uploaded successfully",
-      data: document,
+      message: "Document uploaded and processed successfully",
+      data: {
+        document,
+        processing,
+      },
     });
   } catch (error) {
     console.error(
