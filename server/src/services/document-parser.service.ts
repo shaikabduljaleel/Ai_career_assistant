@@ -13,7 +13,37 @@ export const extractTextFromDocument = async (
     const result = await parser.getText();
     await parser.destroy();
 
-    return result.text;
+    let text = result.text;
+
+    // Fix common PDF encoding artifacts
+    text = text
+      .replace(/\u0083/g, "")
+      .replace(/ΓÇó/g, "•")
+      .replace(/ΓÇö/g, "—");
+
+    // Join words that were split across PDF line breaks.
+    // Example:
+    // Experie
+    // nce
+    // becomes:
+    // Experience
+    text = text.replace(
+      /([A-Za-z])\n([a-z])/g,
+      "$1$2"
+    );
+
+    // Normalize line endings
+    text = text
+      .replace(/\r\n/g, "\n")
+      .replace(/\r/g, "\n");
+
+    // Remove excessive spaces
+    text = text.replace(/[ \t]+/g, " ");
+
+    // Remove excessive blank lines
+    text = text.replace(/\n{3,}/g, "\n\n");
+
+    return text.trim();
   }
 
   if (

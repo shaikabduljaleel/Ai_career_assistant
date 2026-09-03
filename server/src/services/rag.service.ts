@@ -7,14 +7,22 @@ import {
 } from "./llm.service.js";
 
 export const askQuestion = async (
-  question: string
+  question: string,
+  userId: number
 ) => {
+  const startTime = Date.now();
+  console.log(`[RAG] Starting to process question: "${question.substring(0, 50)}..."`);
+
   // 1. Retrieve relevant chunks
+  const embeddingStart = Date.now();
   const chunks =
     await searchSimilarChunks(
       question,
+      userId,
       5
     );
+  const embeddingTime = Date.now() - embeddingStart;
+  console.log(`[RAG] Similarity search completed in ${embeddingTime}ms, found ${chunks.length} chunks`);
 
   // 2. Build context
   const context = chunks
@@ -57,6 +65,7 @@ ${context}
 `;
 
   // 4. Ask the LLM
+  const llmStart = Date.now();
   const answer =
     await generateAnswer([
       {
@@ -68,6 +77,11 @@ ${context}
         content: question,
       },
     ]);
+  const llmTime = Date.now() - llmStart;
+  const totalTime = Date.now() - startTime;
+
+  console.log(`[RAG] LLM response generated in ${llmTime}ms`);
+  console.log(`[RAG] Total processing time: ${totalTime}ms`);
 
   return {
     answer,

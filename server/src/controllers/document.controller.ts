@@ -1,5 +1,6 @@
 import type { Response } from "express";
 import type { AuthRequest } from "../middleware/auth.middleware.js";
+import prisma from "../config/prisma.js";
 import fs from "fs/promises";
 import {
   createDocument,
@@ -49,9 +50,9 @@ export const uploadDocumentController = async (
             req.file.path,
         }
       );
-
+    console.log("ABOUT TO CALL PROCESS DOCUMENT:", document.id);
     const processing = await processDocument(document.id);
-
+    console.log("Process document finished:", document.id);
     return res.status(201).json({
       success: true,
       message: "Document uploaded and processed successfully",
@@ -166,6 +167,66 @@ export const deleteDocumentController = async (
     return res.status(500).json({
       success: false,
       message: "Unable to delete document",
+    });
+  }
+};
+
+export const reprocessDocumentController = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    if (!req.userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required",
+      });
+    }
+
+    const documentId = Number(req.params.id);
+
+    if (Number.isNaN(documentId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid document ID",
+      });
+    }
+
+    // Make sure this document belongs to the logged-in user
+    const document = await prisma.document.findFirst({
+      where: {
+        id: documentId,
+        userId: req.userId,
+      },
+    });
+
+    if (!document) {
+      return res.status(404).json({
+        success: false,
+        message: "Document not found",
+      });
+    }
+
+    console.log("ABOUT TO CALL PROCESS DOCUMENT:", documentId);
+    const processing = await processDocument(
+      documentId
+    );
+    console.log("Process document finished:", documentId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Document reprocessed successfully",
+      data: processing,
+    });
+  } catch (error) {
+    console.error(
+      "Reprocess document error:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to reprocess document",
     });
   }
 };

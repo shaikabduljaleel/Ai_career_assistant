@@ -8,6 +8,8 @@ import ResendVerification from "./pages/ResendVerification";
 import VerifyOtp from "./pages/VerifyOtp";
 import Profile from "./pages/Profile";
 import Chat from "./pages/Chat";
+import Documents from "./pages/Documents";
+import CareerIntelligence from "./pages/CareerIntelligence";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -47,7 +49,28 @@ function App() {
 />
 <Route
   path="/chat"
-  element={<Chat />}
+  element={
+  <ProtectedRoute>
+    <Chat />
+  </ProtectedRoute>
+  
+  }
+/>
+        <Route
+  path="/documents"
+  element={
+    <ProtectedRoute>
+      <Documents />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/career-intelligence"
+  element={
+    <ProtectedRoute>
+      <CareerIntelligence />
+    </ProtectedRoute>
+  }
 />
         <Route path="*" element={<Login />} />
       </Routes>

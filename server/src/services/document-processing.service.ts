@@ -12,6 +12,7 @@ import { embedDocumentChunks } from "./document-embedding.service.js";
 export const processDocument = async (
   documentId: number
 ) => {
+  console.log("PROCESS DOCUMENT CALLED:", documentId);
   const document =
     await prisma.document.findUnique({
       where: {

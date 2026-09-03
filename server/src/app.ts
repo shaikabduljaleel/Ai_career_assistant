@@ -10,6 +10,7 @@ import profileRoutes from "./routes/profile.routes.js";
 import documentRoutes from "./routes/document.routes.js";
 import searchRoutes from "./routes/search.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
+import careerIntelligenceRoutes from "./routes/career-intelligence.routes.js";
 
 const app = express();
 
@@ -26,6 +27,10 @@ app.use(passport.initialize());
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
+app.use(
+  "/api/career-intelligence",
+  careerIntelligenceRoutes
+);
 app.use(
   "/api/documents",
   documentRoutes

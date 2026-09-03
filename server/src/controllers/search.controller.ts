@@ -1,13 +1,21 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
+import type { AuthRequest } from "../middleware/auth.middleware.js";
 import {
   searchSimilarChunks,
 } from "../services/vector-search.service.js";
 
 export const searchChunks = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) => {
   try {
+    if (!req.userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required",
+      });
+    }
+
     const { query } = req.body;
 
     if (
@@ -22,6 +30,7 @@ export const searchChunks = async (
 
     const results = await searchSimilarChunks(
       query.trim(),
+      req.userId,
       5
     );
 

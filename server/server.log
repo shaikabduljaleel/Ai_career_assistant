@@ -1,0 +1,124 @@
+REPROCESS CONTROLLER CALLED
+◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+Server running on http://localhost:5000
+[RAG] Starting to process question: "What are my frontend skills?..."
+[RAG] Similarity search completed in 329ms, found 5 chunks
+[RAG] LLM response generated in 7913ms
+[RAG] Total processing time: 8244ms
+[0mPOST /api/chat [32m200[0m 8278.273 ms - 4883[0m
+[0mGET /api/auth/me [36m304[0m 977.024 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 18.894 ms - -[0m
+[RAG] Starting to process question: "hello..."
+[RAG] Similarity search completed in 111ms, found 3 chunks
+[RAG] LLM response generated in 8750ms
+[RAG] Total processing time: 8861ms
+[0mPOST /api/chat [32m200[0m 8863.282 ms - 2196[0m
+[RAG] Starting to process question: "what skills should master in deeplearning..."
+[RAG] Similarity search completed in 154ms, found 5 chunks
+[RAG] LLM response generated in 47422ms
+[RAG] Total processing time: 47576ms
+[0mPOST /api/chat [32m200[0m 47576.370 ms - 6926[0m
+[0mGET /api/auth/me [36m304[0m 67.930 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 2.445 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 52.969 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 2.596 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 153.402 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 5.126 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 48.402 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 3.023 ms - -[0m
+[0mGET /api/auth/me [33m401[0m 6.891 ms - 53[0m
+[0mGET /api/auth/me [33m401[0m 0.813 ms - 53[0m
+[0mGET /api/auth/me [33m401[0m 1.407 ms - 53[0m
+[0mGET /api/auth/me [33m401[0m 0.399 ms - 53[0m
+[0mGET /api/auth/me [33m401[0m 1.426 ms - 53[0m
+[0mGET /api/auth/me [33m401[0m 4.443 ms - 53[0m
+[0mGET /api/auth/me [33m401[0m 5.054 ms - 53[0m
+[0mGET /api/auth/me [33m401[0m 0.512 ms - 53[0m
+[RAG] Starting to process question: "Tell me about my projects..."
+[RAG] Similarity search completed in 3706ms, found 4 chunks
+[RAG] LLM response generated in 41492ms
+[RAG] Total processing time: 45204ms
+[0mPOST /api/chat [32m200[0m 45253.588 ms - 5331[0m
+[RAG] Starting to process question: "how can i explain my image based cluster identific..."
+[RAG] Similarity search completed in 261ms, found 5 chunks
+[RAG] LLM response generated in 46656ms
+[RAG] Total processing time: 46917ms
+[0mPOST /api/chat [32m200[0m 46919.162 ms - 7123[0m
+[0mGET /api/auth/me [33m401[0m 1.014 ms - 53[0m
+[0mGET /api/auth/me [33m401[0m 0.305 ms - 53[0m
+[0mGET /api/auth/google [36m302[0m 38.064 ms - 0[0m
+[0mGET /api/auth/google/callback?iss=https%3A%2F%2Faccounts.google.com&code=4%2F0ATsMZqBUNOAusFqB2tyelgiDRnT7ZZZqdKSece37RZMk_DTyTLUHRl0V2_1pLDlN9tursw&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&authuser=0&prompt=none [36m302[0m 922.324 ms - 60[0m
+[0mGET /api/auth/me [36m304[0m 5.093 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 3.152 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 69.087 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 3.846 ms - -[0m
+[0mGET /api/documents [32m200[0m 41.679 ms - 1369[0m
+[0mGET /api/documents [36m304[0m 3.265 ms - -[0m
+[0mDELETE /api/documents/4 [32m200[0m 330.036 ms - 58[0m
+[0mDELETE /api/documents/5 [32m200[0m 25.331 ms - 58[0m
+[0mDELETE /api/documents/6 [32m200[0m 30.204 ms - 58[0m
+ABOUT TO CALL PROCESS DOCUMENT: 8
+PROCESS DOCUMENT CALLED: 8
+Process document finished: 8
+[0mPOST /api/documents/8/reprocess [32m200[0m 3918.539 ms - 115[0m
+[0mDELETE /api/documents/8 [32m200[0m 20.295 ms - 58[0m
+ABOUT TO CALL PROCESS DOCUMENT: 9
+PROCESS DOCUMENT CALLED: 9
+Process document finished: 9
+[0mPOST /api/documents [32m201[0m 2198.788 ms - 488[0m
+[0mGET /api/documents [32m200[0m 57.251 ms - 361[0m
+[0mGET /api/auth/me [36m304[0m 66.069 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 3.848 ms - -[0m
+[0mGET /api/profile [36m304[0m 163.627 ms - -[0m
+[0mGET /api/profile [36m304[0m 15.860 ms - -[0m
+[0mGET /api/documents [36m304[0m 71.219 ms - -[0m
+[0mGET /api/documents [36m304[0m 2.442 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 75.912 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 3.526 ms - -[0m
+[0mGET /api/career-intelligence [33m404[0m 38.835 ms - 162[0m
+[0mGET /api/career-intelligence [33m404[0m 41.763 ms - 162[0m
+[0mGET /api/auth/me [36m304[0m 275.376 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 20.888 ms - -[0m
+[0mGET /api/auth/me [33m401[0m 0.772 ms - 53[0m
+[0mGET /api/auth/login [33m404[0m 19.589 ms - 153[0m
+[0mPOST /api/auth/login [33m401[0m 1075.560 ms - 48[0m
+[0mPOST /api/auth/login [33m401[0m 750.533 ms - 48[0m
+[0mGET /api/auth/me [36m304[0m 115.857 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 14.384 ms - -[0m
+[0mGET /api/profile [36m304[0m 209.425 ms - -[0m
+[0mGET /api/profile [36m304[0m 200.868 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 9.732 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 4.796 ms - -[0m
+[0mPOST /api/auth/login [33m401[0m 595.803 ms - 48[0m
+[0mPOST /api/auth/login [33m400[0m 2.143 ms - 61[0m
+[0mPOST /api/auth/logout [32m200[0m 3.002 ms - 46[0m
+[0mPOST /api/auth/login [33m401[0m 318.582 ms - 48[0m
+[0mPOST /api/auth/login [33m401[0m 281.335 ms - 48[0m
+[0mPOST /api/auth/login [33m401[0m 174.733 ms - 48[0m
+[0mPOST /api/auth/login [33m401[0m 179.801 ms - 48[0m
+[0mPOST /api/auth/login [33m401[0m 218.818 ms - 48[0m
+[0mPOST /api/auth/login [33m401[0m 225.381 ms - 48[0m
+[0mGET /api/auth/google [36m302[0m 0.967 ms - 0[0m
+[0mGET /api/auth/google/callback?iss=https%3A%2F%2Faccounts.google.com&code=4%2F0ATsMZqDavPLIRGJp4nFE8rX0-mcwsQV2wiFF8Afgf2MQ0tj71fculSjWqiF6gpo0jhuB4Q&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=0&prompt=none [36m302[0m 945.279 ms - 60[0m
+[0mGET /api/auth/me [36m304[0m 4.468 ms - -[0m
+[0mGET /api/auth/me [36m304[0m 3.173 ms - -[0m
+[0mPOST /api/auth/forgot-password [33m400[0m 9.650 ms - 1243[0m
+SyntaxError: Expected double-quoted property name in JSON at position 43 (line 3 column 1)
+    at JSON.parse (<anonymous>)
+    at parse (C:\Users\sabdu\OneDrive\Documents\ai_carrer_assistant\server\node_modules\body-parser\lib\types\json.js:91:21)
+    at C:\Users\sabdu\OneDrive\Documents\ai_carrer_assistant\server\node_modules\body-parser\lib\read.js:162:18
+    at AsyncResource.runInAsyncScope (node:async_hooks:227:14)
+    at invokeCallback (C:\Users\sabdu\OneDrive\Documents\ai_carrer_assistant\server\node_modules\raw-body\index.js:238:16)
+    at done (C:\Users\sabdu\OneDrive\Documents\ai_carrer_assistant\server\node_modules\raw-body\index.js:227:7)
+    at IncomingMessage.onEnd (C:\Users\sabdu\OneDrive\Documents\ai_carrer_assistant\server\node_modules\raw-body\index.js:287:7)
+    at IncomingMessage.emit (node:events:509:28)
+    at endReadableNT (node:internal/streams/readable:1735:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[0mPOST /api/auth/forgot-password [32m200[0m 1043.522 ms - 86[0m
+[0mPOST /api/auth/reset-password [32m200[0m 333.440 ms - 56[0m
+[0mPOST /api/auth/login [32m200[0m 242.533 ms - 141[0m
+[0mGET /api/career-intelligence [33m404[0m 0.673 ms - 162[0m
+[0mGET /api/career-intelligence [33m404[0m 0.484 ms - 162[0m
+[0mGET /api/career-intelligence/ [33m404[0m 0.222 ms - 163[0m
+[0mGET /api/health [32m200[0m 0.806 ms - 108[0m
+[0mGET /api/auth [33m404[0m 0.458 ms - 147[0m

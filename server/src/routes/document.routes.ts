@@ -4,6 +4,7 @@ import {
   uploadDocumentController,
   getDocumentsController,
   deleteDocumentController,
+  reprocessDocumentController,
 } from "../controllers/document.controller.js";
 
 import {
@@ -35,4 +36,9 @@ router.delete(
   deleteDocumentController
 );
 
+router.post(
+  "/:id/reprocess",
+  authenticate,
+  reprocessDocumentController
+);
 export default router;

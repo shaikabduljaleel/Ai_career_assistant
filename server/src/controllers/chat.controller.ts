@@ -1,17 +1,25 @@
 import type {
-  Request,
   Response,
 } from "express";
+
+import type { AuthRequest } from "../middleware/auth.middleware.js";
 
 import {
   askQuestion,
 } from "../services/rag.service.js";
 
 export const chat = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) => {
   try {
+    if (!req.userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required",
+      });
+    }
+
     const { message } = req.body;
 
     if (
@@ -26,7 +34,8 @@ export const chat = async (
 
     const result =
       await askQuestion(
-        message.trim()
+        message.trim(),
+        req.userId
       );
 
     return res.status(200).json({

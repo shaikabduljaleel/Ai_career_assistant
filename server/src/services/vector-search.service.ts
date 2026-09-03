@@ -11,6 +11,7 @@ interface SearchResult {
 
 export const searchSimilarChunks = async (
   query: string,
+  userId: number,
   limit = 5
 ): Promise<SearchResult[]> => {
   const embedding = await generateEmbedding(query);
@@ -21,19 +22,22 @@ export const searchSimilarChunks = async (
   await prisma.$queryRawUnsafe<SearchResult[]>(
     `
     SELECT
-      id,
-      "documentId",
-      "chunkIndex",
-      content,
-      embedding <=> $1::vector AS distance
-    FROM "DocumentChunk"
-    WHERE embedding IS NOT NULL
-      AND embedding <=> $1::vector < 0.55
-    ORDER BY embedding <=> $1::vector
+      dc.id,
+      dc."documentId",
+      dc."chunkIndex",
+      dc.content,
+      dc.embedding <=> $1::vector AS distance
+    FROM "DocumentChunk" dc
+    INNER JOIN "Document" d ON dc."documentId" = d.id
+    WHERE d."userId" = $3
+      AND dc.embedding IS NOT NULL
+      AND dc.embedding <=> $1::vector < 0.55
+    ORDER BY dc.embedding <=> $1::vector
     LIMIT $2
     `,
     vector,
-    limit
+    limit,
+    userId
   );
 
   return results;
