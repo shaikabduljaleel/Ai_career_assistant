@@ -78,3 +78,23 @@ export const getCareerIntelligence =
 
     return result.data;
   };
+
+  export const getCareerAnalysis = async (): Promise<string> => {
+  const response = await fetch(
+    `${API_URL}/career-analysis`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  );
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      result.message || "Failed to generate career analysis"
+    );
+  }
+
+  return result.data.analysis;
+};

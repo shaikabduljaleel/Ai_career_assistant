@@ -21,6 +21,9 @@ export const generateAnswer = async (
         model: CHAT_MODEL,
         messages,
         stream: false,
+        options: {
+          num_predict: 500,
+        },
       }),
     }
   );

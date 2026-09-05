@@ -11,6 +11,7 @@ import documentRoutes from "./routes/document.routes.js";
 import searchRoutes from "./routes/search.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
 import careerIntelligenceRoutes from "./routes/career-intelligence.routes.js";
+import careerAnalysisRoutes from "./routes/career-analysis.routes.js";
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use(
   "/api/career-intelligence",
   careerIntelligenceRoutes
 );
+app.use("/api/career-analysis",careerAnalysisRoutes)
 app.use(
   "/api/documents",
   documentRoutes
